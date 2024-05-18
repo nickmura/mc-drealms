@@ -25,13 +25,14 @@ export default function Create() {
     });
 
     function create() {
-        setPurchased(true);
         setLoading(true);
 
         fetch("/api/payment/createPaymentLink?location=eu", { cache: 'force-cache' })
             .then(data => data.json())
             .then(data => {
-                window.location.href = data.url;
+                window.open(data.url, '_blank');
+                setPurchased(true);
+                setLoading(false)
             })
     }
 
