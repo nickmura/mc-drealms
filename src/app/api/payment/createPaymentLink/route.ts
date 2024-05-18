@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
         const paymentLink = await stripe.paymentLinks.create({
             line_items: [
                 {
-                price: eu_price_id,
-                quantity: 1,
+                    price: eu_price_id,
+                    quantity: 1,
                 },
             ],
         });
@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
         const paymentLink = await stripe.paymentLinks.create({
             line_items: [
                 {
-                price: eu_price_id,
-                quantity: 1,
+                    price: eu_price_id,
+                    quantity: 1,
                 },
             ],
         });

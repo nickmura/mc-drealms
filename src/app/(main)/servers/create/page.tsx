@@ -15,6 +15,7 @@ export default function Create() {
     }
 
     const [purchased, setPurchased] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ServerData>({
         region: "eu",
         version: "java",
@@ -25,6 +26,13 @@ export default function Create() {
 
     function create() {
         setPurchased(true);
+        setLoading(true);
+
+        fetch("/api/payment/createPaymentLink?location=eu", { cache: 'force-cache' })
+            .then(data => data.json())
+            .then(data => {
+                window.location.href = data.url;
+            })
     }
 
     return (
@@ -104,7 +112,7 @@ export default function Create() {
                     </div>
                     <div
                         className={`
-                            rounded-r-md p-3 flex items-center justify-center font-medium text-md !text-gray-300
+                            p-3 flex items-center justify-center font-medium text-md !text-gray-300
                             ${data?.type === "bukkit" ? "bg-[rgb(255,0,55)] text-white" : "bg-gray-100"}`}
                     >
                         Bukkit
@@ -120,14 +128,14 @@ export default function Create() {
 
                 <p className="mb-2 mt-6 font-medium text-lg">Allow Mods</p>
                 <div className="flex">
-                    <input type="checkbox" disabled />
+                    <input type="checkbox" height={20} width={20} disabled />
                 </div>
 
                 <div className="flex items-end justify-end flex-1 pb-16 px-4">
                     <Button
-                        custom={{ width: "400px", height: "50px", display: "flex", alignItems: "center", justifyContent: "center" }}
+                        custom={{ width: "400px", height: "50px", display: "flex", alignItems: "center", justifyContent: "center", background: loading ? "rgb(247,178,193)" : null, cursor: loading ? "default" : "cursor"}}
                         type="red"
-                        click={() => { create() }}
+                        click={() => { if (!loading) create() }}
                     >
                         Create
                     </Button>
