@@ -10,10 +10,9 @@ export default class Wallet {
             projectId: (process.env.NEXT_PUBLIC_PROJECT_ID as string),
             clientKey: (process.env.NEXT_PUBLIC_CLIENT_KEY as string),
             appId: (process.env.NEXT_PUBLIC_APP_ID as string),
-            chainName: Avalanche.name,
-            chainId: Avalanche.id,
+
             wallet: {
-                displayWalletEntry: true,
+                displayWalletEntry: false,
                 uiMode: "light",
             },
         });
