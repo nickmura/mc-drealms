@@ -2,7 +2,8 @@
 
 import Button from "@/components/Button";
 import Confetti from "@/components/Confetti";
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Create() {
 
@@ -23,17 +24,39 @@ export default function Create() {
         type: "vanilla",
         mods: false
     });
+    const [link, setLink] = useState<string>("");
+    const [PLink, setPLink] = useState<string>("");
+
+    useEffect(() => {
+        if (loading && link) {
+            const interval = setInterval(() => {
+                // Check the payment link
+                fetch("/api/payment/checkPaymentLink?plink=" + PLink, { cache: 'no-cache' })
+                    .then(data => data.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data?.success !== false) setPurchased(true);
+                    })
+                    .catch(err => console.error(err));
+            }, 5000);
+            return () => clearInterval(interval);
+        }
+    }, [link, loading]);
 
     function create() {
-        setPurchased(true);
         setLoading(true);
 
-        fetch("/api/payment/createPaymentLink?location=eu", { cache: 'force-cache' })
+        fetch("/api/payment/createPaymentLink?location=eu", { cache: 'no-cache' })
             .then(data => data.json())
             .then(data => {
-                window.location.href = data.url;
+                setLink(data.url);
+                setPLink(data.id)
+                window.open(data.url, "_blank");
             })
+            .catch(err => console.error(err));
     }
+
+    console.log(link);
 
     return (
         <div className="p-4 h-full">
@@ -131,13 +154,30 @@ export default function Create() {
                     <input type="checkbox" height={20} width={20} disabled />
                 </div>
 
-                <div className="flex items-end justify-end flex-1 pb-16 px-4">
+                <div className="flex flex-1 mt-10">
                     <Button
-                        custom={{ width: "400px", height: "50px", display: "flex", alignItems: "center", justifyContent: "center", background: loading ? "rgb(247,178,193)" : null, cursor: loading ? "default" : "cursor"}}
-                        type="red"
+                        custom={{
+                            width: "400px",
+                            height: "50px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            background: loading ? "rgb(247,178,193)" : null,
+                            cursor: loading ? "default" : "cursor"
+                        }}
                         click={() => { if (!loading) create() }}
+                        type="red"
                     >
-                        Create
+                        { loading ? (
+                            <Image
+                                src="/loader.svg"
+                                alt="Loader"
+                                height={30}
+                                width={30}
+                            />
+                        ) : (
+                            <>Create</>
+                        )}
                     </Button>
                 </div>
             </div>

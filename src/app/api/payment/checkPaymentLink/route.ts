@@ -9,10 +9,12 @@ let na_price_id = 'price_1PHbBVRvCD4ylLqcrpMqerCR'
 
 export async function GET(request: NextRequest) { 
     // const paymentLink = await stripe.paymentLinks.retrieve(request.nextUrl.searchParams.get('plink') ?? '');
-    const sessions = await stripe.checkout.sessions.list({
-        payment_link: request.nextUrl.searchParams.get('plink') ?? '',
+    const link = request.nextUrl.searchParams.get('plink') ?? '';
+    if (link) {
+      const sessions = await stripe.checkout.sessions.list({
+        payment_link: link,
       });
       return NextResponse.json(sessions)
+    } else return NextResponse.json({ success: false })
     //TODO: Select a stripe payment...
-
 }
