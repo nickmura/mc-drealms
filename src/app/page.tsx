@@ -1,6 +1,46 @@
+'use client'
 import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
+  const [ pLink, setPLink ] = useState<string|undefined>()
+
+  const [ pLinkURL, setPLinkURL ] = useState<string|undefined>()
+  const [ pLinkStatus, setPLinkStatus ] = useState<string|undefined>()
+  async function TestAPI() {
+    let res = await fetch('/api/payment/createPaymentLink?location=eu');
+    if (!res.ok) throw Error('bad')
+    res = await res.json() //@ts-ignore
+    setPLink(res.id)
+    setPLinkURL(res.url)
+  }
+
+  const CheckPaymentLink = async (id:string) => {
+    if (id == '') throw new Error('missing id')
+    console.log(id)
+    let check = await fetch(`/api/payment/checkPaymentLink?plink=${id}`);
+    if (!check.ok) throw Error('bad')
+    check = await check.json() // @ts-ignore
+    let sessions = check.data
+    console.log(sessions)
+    if (sessions.length > 0) {
+      //TODO: check if one of the sessions has been PAID
+
+      for (let i = 0; i < sessions.length; i++) {
+        if (sessions[i].status == 'complete' && sessions[i].payment_status) {
+          console.log('PAID123', sessions[i].status, sessions[i].payment_status)
+          setPLinkStatus(sessions[i].status)
+          // TODO: Create migration function that basically tells the end_user what server ip is , etc
+
+        } else {
+          console.log(sessions[i].status)
+        }
+      }
+    } else {
+      return 0
+    } 
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -8,6 +48,14 @@ export default function Home() {
           Get started by editing&nbsp;
           <code className="font-mono font-bold">src/app/page.tsx</code>
         </p>
+        <button onClick={TestAPI} >Test API (Pretend we configured the MC server/dRealm we want)</button>
+        {pLinkURL ? <>
+          <a href={pLinkURL} target='_blank'>Purchase</a>
+          <button onClick={()=>CheckPaymentLink(pLink ?? '')} >Check Link</button>
+        </> : <>
+        </>}
+
+
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
           <a
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
@@ -27,7 +75,16 @@ export default function Home() {
           </a>
         </div>
       </div>
+      {pLinkStatus ? <>
+          {pLinkStatus == 'complete' ? <>
+            <div>Success! The payment has been complete</div>
+          </> : <>
+          
+          Try again...</>}
+          
 
+        </> : <>
+        </>}
       <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"

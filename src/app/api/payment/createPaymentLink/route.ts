@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Stripe } from 'stripe'
-let stripe = new Stripe('sk_test_51PHYJzRvCD4ylLqcnGMrtKxLJTccJOKpKTnRQLVBzhhrvxvwIkFgyT80nYb3i99REcXtiqMe8uqalRBZoT2yqVax00xu6qOVoy')
+let stripe = new Stripe(process.env.STRIPE_SECRET_API ?? '')
 
 let eu_price_id = 'price_1PHZvRRvCD4ylLqcexSw2yZ4'
 let na_price_id = 'price_1PHbBVRvCD4ylLqcrpMqerCR'
