@@ -13,6 +13,16 @@
         }
     }
 
+    &.red {
+        border: 1px solid rgb(255,0,55);
+        background: rgb(255,0,55);
+        color: white;
+
+        &:hover {
+            background: rgb(216, 0, 47);
+        }
+    }
+
     &.blank {
         background: transparent;
         padding: 0;

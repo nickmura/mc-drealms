@@ -44,8 +44,6 @@ export default function Header() {
         }
     };
 
-    console.log(account);
-
     return (
         <header
             className="
@@ -63,7 +61,7 @@ export default function Header() {
             </Link>
 
             { account ? (
-                <p>Hi, <b>{account.name}</b></p>
+                <p className="text-lg">Hi, <span className="font-medium text-[rgb(255,0,55)]">{account.name}</span></p>
             ) : (
                 <Button type="main" click={() => { handleLogin("google") }}>
                     Sign In
