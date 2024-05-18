@@ -1,31 +1,15 @@
 'use client';
 
-import { useEffect, useState } from "react";
-
-import { type ParticleNetwork, WalletEntryPosition } from "@particle-network/auth";
+import { WalletEntryPosition } from "@particle-network/auth";
 import { AuthCoreContextProvider } from "@particle-network/auth-core-modal";
 import { ModalProvider } from "@particle-network/connect-react-ui";
-import { evmWallets } from "@particle-network/connect";
 import { Avalanche } from "@particle-network/chains";
-
-import UserInfoSetter from "../Wallet/UserInfoSetter";
-import Wallet from "@/lib/wallet";
-import { useAccountStore } from "@/lib/states";
 
 export default function Wrapper({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
-    const setAccount = useAccountStore(state => state.setUserInfo);
-    const [particle, setParticle] = useState<ParticleNetwork | null>(null);
-
-    useEffect(() => {
-        const wallet = new Wallet();
-        setParticle(wallet.particle);
-    }, []);
-
     return (
         <AuthCoreContextProvider
             options={{
@@ -64,7 +48,6 @@ export default function Wrapper({
                 ]}
             >
                 {children}
-                <UserInfoSetter />
             </ModalProvider>
         </AuthCoreContextProvider>
     )
